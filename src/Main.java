@@ -43,7 +43,7 @@ public class Main {
                     throw new Exception("Incorrect input! Digit must be prime!");
                 }
             } catch (InputMismatchException e) {
-                System.out.println(e.getMessage());
+                System.out.println("Incorrect input!");
                 isCorrect = false;
                 scanner = new Scanner(System.in);
             } catch(Exception e) {
