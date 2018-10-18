@@ -28,44 +28,34 @@ public class Main {
         return new BigInteger[]{a, b};
     }
 
-    public static void main(String[] args) {
-        BigInteger p, q;
+    private static BigInteger inputNum() {
         Scanner scanner = new Scanner(System.in);
-        boolean isPrime = true, isCorrect = true;
+        BigInteger num;
+        boolean isCorrect, isPrime;
         do {
-            if (!isPrime) {
-                System.out.println("Incorrect input! Digit must be prime!");
-            }
+            isCorrect = true;
+            isPrime = true;
             System.out.print("Input prime number p: ");
-            p = BigInteger.ZERO;
+            num = BigInteger.ZERO;
             try {
-                p = scanner.nextBigInteger();
+                num = scanner.nextBigInteger();
+                if (!num.isProbablePrime(100)) {
+                    throw new Exception("Incorrect input! Digit must be prime!");
+                }
             } catch (InputMismatchException e) {
-                System.out.println("Incorrect input!");
+                System.out.println(e.getMessage());
                 isCorrect = false;
-            }
-            if (!p.isProbablePrime(100)) {
+                scanner = new Scanner(System.in);
+            } catch(Exception e) {
+                System.out.println(e.getMessage());
                 isPrime = false;
             }
-        } while (!p.isProbablePrime(100) || !isCorrect);
-        isPrime = true;
-        isCorrect = true;
-        do {
-            if (!isPrime) {
-                System.out.println("Incorrect input! Digit must be prime!");
-            }
-            System.out.print("Input prime number q: ");
-            q = BigInteger.ZERO;
-            try {
-                q = scanner.nextBigInteger();
-            } catch (InputMismatchException e) {
-                System.out.println("Incorrect input!");
-                isCorrect = false;
-            }
-            if (!p.isProbablePrime(100)) {
-                isPrime = false;
-            }
-        } while (!q.isProbablePrime(100) || !isCorrect);
+        } while (!isPrime || !isCorrect);
+        return num;
+    }
+
+    public static void main(String[] args) {
+        BigInteger p = inputNum(), q = inputNum();
         BigInteger n = p.multiply(q);
         BigInteger phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
         BigInteger e;
@@ -77,8 +67,8 @@ public class Main {
         } while (e.compareTo(phi) >= 0 || !relativelyPrime(phi, e) || d.compareTo(BigInteger.ZERO) < 0);
         System.out.println("e = " + e);
         System.out.println("d = " + d);
-        scanner.nextLine();
         System.out.print("Input some text here: ");
+        Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
         long[] out = new long[input.length()], in = new long[input.length()];
         for (int i = 0; i < input.length(); i++) {
