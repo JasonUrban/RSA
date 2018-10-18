@@ -1,4 +1,5 @@
 import java.math.BigInteger;
+import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -30,28 +31,41 @@ public class Main {
     public static void main(String[] args) {
         BigInteger p, q;
         Scanner scanner = new Scanner(System.in);
-        boolean isPrime = true;
+        boolean isPrime = true, isCorrect = true;
         do {
-            if(!isPrime) {
+            if (!isPrime) {
                 System.out.println("Incorrect input! Digit must be prime!");
             }
             System.out.print("Input prime number p: ");
-            p = new BigInteger(String.valueOf(scanner.nextInt()));
-            if(!p.isProbablePrime(100)) {
+            p = BigInteger.ZERO;
+            try {
+                p = scanner.nextBigInteger();
+            } catch (InputMismatchException e) {
+                System.out.println("Incorrect input!");
+                isCorrect = false;
+            }
+            if (!p.isProbablePrime(100)) {
                 isPrime = false;
             }
-        } while (!p.isProbablePrime(100));
+        } while (!p.isProbablePrime(100) || !isCorrect);
         isPrime = true;
+        isCorrect = true;
         do {
-            if(!isPrime) {
+            if (!isPrime) {
                 System.out.println("Incorrect input! Digit must be prime!");
             }
             System.out.print("Input prime number q: ");
-            q = new BigInteger(String.valueOf(scanner.nextInt()));
-            if(!p.isProbablePrime(100)) {
+            q = BigInteger.ZERO;
+            try {
+                q = scanner.nextBigInteger();
+            } catch (InputMismatchException e) {
+                System.out.println("Incorrect input!");
+                isCorrect = false;
+            }
+            if (!p.isProbablePrime(100)) {
                 isPrime = false;
             }
-        } while (!q.isProbablePrime(100));
+        } while (!q.isProbablePrime(100) || !isCorrect);
         BigInteger n = p.multiply(q);
         BigInteger phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
         BigInteger e;
