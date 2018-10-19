@@ -28,14 +28,14 @@ public class Main {
         return new BigInteger[]{a, b};
     }
 
-    private static BigInteger inputNum() {
+    private static BigInteger inputNum(String str) {
         Scanner scanner = new Scanner(System.in);
         BigInteger num;
         boolean isCorrect, isPrime;
         do {
             isCorrect = true;
             isPrime = true;
-            System.out.print("Input prime number p: ");
+            System.out.print("Input prime number " + str + ": ");
             num = BigInteger.ZERO;
             try {
                 num = scanner.nextBigInteger();
@@ -55,7 +55,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        BigInteger p = inputNum(), q = inputNum();
+        BigInteger p = inputNum("p"), q = inputNum("q");
         BigInteger n = p.multiply(q);
         BigInteger phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
         BigInteger e;
