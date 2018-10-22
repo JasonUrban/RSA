@@ -14,6 +14,19 @@ public class Main {
         return a;
     }
 
+    private static boolean isPrime(BigInteger n) {
+        //check if n is a multiple of 2
+        if (n.mod(new BigInteger("2")).equals(BigInteger.ZERO)) {
+            return false;
+        }
+        //if not, then just check the odds
+        for (BigInteger i = new BigInteger("3"); i.multiply(i).compareTo(n) <= 0; i = i.add(new BigInteger("2"))) {
+            if (n.mod(i).equals(BigInteger.ZERO))
+                return false;
+        }
+        return true;
+    }
+
     private static boolean relativelyPrime(BigInteger a, BigInteger b) {
         return gcd(a, b).equals(BigInteger.ONE);
     }
@@ -39,14 +52,14 @@ public class Main {
             num = BigInteger.ZERO;
             try {
                 num = scanner.nextBigInteger();
-                if (!num.isProbablePrime(100)) {
+                if (!isPrime(num)) {
                     throw new Exception("Incorrect input! Digit must be prime!");
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Incorrect input!");
                 isCorrect = false;
                 scanner = new Scanner(System.in);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
                 isPrime = false;
             }
