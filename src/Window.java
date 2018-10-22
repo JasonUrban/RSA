@@ -27,7 +27,7 @@ class Window extends JFrame {
         JLabel outLabel = new JLabel("Your encrypted data:");
         JLabel pLabel = new JLabel("Input prime number p:");
         JLabel qLabel = new JLabel("Input prime number q:");
-        JLabel eLabel = new JLabel("Choose e parameter:");
+        JLabel eLabel = new JLabel("Input e parameter:");
         sourceText = new JTextArea();
         outputText = new JTextArea();
         SpinnerModel model = new SpinnerNumberModel(1009, 1009, 9973, 1);
@@ -36,18 +36,6 @@ class Window extends JFrame {
         q = new JSpinner(model);
         model = new SpinnerNumberModel(1009, 1000, 1000000000, 1);
         e = new JSpinner(model);
-        p.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e1) {
-                e.setModel(new SpinnerNumberModel((int) e.getValue(), 1009, ((int) p.getValue() - 1) * ((int) q.getValue() - 1), 1));
-            }
-        });
-        q.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e1) {
-                e.setModel(new SpinnerNumberModel((int) e.getValue(), 1009, ((int) p.getValue() - 1) * ((int) q.getValue() - 1), 1));
-            }
-        });
         JRadioButton encrypt = new JRadioButton("Encrypt");
         JRadioButton decrypt = new JRadioButton("Decrypt");
         keyByDefault = new JCheckBox("Key by default");
@@ -159,7 +147,7 @@ class Window extends JFrame {
             q.setVisible(!q.isVisible());
             e.setVisible(!e.isVisible());
         });
-        encrypt.addActionListener(e -> {
+        encrypt.addActionListener(e1 -> {
             encryptButton.setVisible(true);
             decryptButton.setVisible(false);
             sourceLabel.setText("Input text for encryption here:");
@@ -169,8 +157,12 @@ class Window extends JFrame {
                 sourceText.setText(outputText.getText());
                 outputText.setText(temp);
             }
+            pLabel.setText("Input prime number p:");
+            qLabel.setText("Input prime number q:");
+            eLabel.setVisible(true);
+            e.setVisible(true);
         });
-        decrypt.addActionListener(e -> {
+        decrypt.addActionListener(e1 -> {
             encryptButton.setVisible(false);
             decryptButton.setVisible(true);
             sourceLabel.setText("Input text for decryption here:");
@@ -180,6 +172,12 @@ class Window extends JFrame {
                 sourceText.setText(outputText.getText());
                 outputText.setText(temp);
             }
+            pLabel.setText("Input d parameter:");
+            qLabel.setText("Input n parameter:");
+            eLabel.setVisible(false);
+            e.setVisible(false);
+            p.setModel(new SpinnerNumberModel(1009, 1000, 1000000000, 1));
+            q.setModel(new SpinnerNumberModel(1009, 1000, 1000000000, 1));
         });
         clearButton.addActionListener(e1 -> {
             sourceText.setText("");
@@ -188,8 +186,8 @@ class Window extends JFrame {
             q.setValue(1009);
             e.setValue(0);
         });
-        encryptButton.addActionListener(e -> translate());
-        decryptButton.addActionListener(e -> translate());
+        encryptButton.addActionListener(e -> translate(decrypt.isSelected()));
+        decryptButton.addActionListener(e -> translate(decrypt.isSelected()));
     }
 
     public class MyPanel extends JPanel {
@@ -208,38 +206,66 @@ class Window extends JFrame {
         }
     }
 
-    private void translate() {
+    private void translate(boolean isDecrypt) {
         BigInteger[] key = new BigInteger[2];
-        if (keyByDefault.isSelected()) {
-            long p = 0, q = 0;
-            Random rand = new Random();
-            while (!Algorithm.isPrime(new BigInteger(Long.toString(p))) || p < 1000) {
-                p = rand.nextInt();
+        if (!isDecrypt) {
+            BigInteger eValue, phi, n, d;
+            if (keyByDefault.isSelected()) {
+                long p = 0, q = 0;
+                Random rand = new Random();
+                while (!Algorithm.isPrime(new BigInteger(Long.toString(p))) || p < 1000) {
+                    p = rand.nextInt();
+                }
+                while (!Algorithm.isPrime(new BigInteger(Long.toString(q))) || q < 1000) {
+                    q = rand.nextInt();
+                }
+                key[0] = new BigInteger(Long.toString(p));
+                key[1] = new BigInteger(Long.toString(q));
+                n = key[0].multiply(key[1]);
+                phi = key[0].subtract(BigInteger.ONE).multiply(key[1].subtract(BigInteger.ONE));
+                do {
+                    eValue = new BigInteger(phi.bitLength(), rand);
+                    d = Algorithm.xgcd(phi, eValue)[1];
+                }
+                while (eValue.compareTo(phi) >= 0 || !Algorithm.relativelyPrime(phi, eValue) || d.compareTo(BigInteger.ZERO) < 0);
+            } else {
+                key[0] = new BigInteger(p.getValue().toString());
+                key[1] = new BigInteger(q.getValue().toString());
+                n = key[0].multiply(key[1]);
+                phi = key[0].subtract(BigInteger.ONE).multiply(key[1].subtract(BigInteger.ONE));
+                eValue = new BigInteger(e.getValue().toString());
+                d = Algorithm.xgcd(phi, eValue)[1];
+                if (d.compareTo(BigInteger.ZERO) < 0) {
+                    JOptionPane.showMessageDialog(Window.this, "Bad parameters!\n" +
+                                    "Try once again...",
+                            "Error!",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (!Algorithm.isPrime(key[0]) || !Algorithm.isPrime(key[1])) {
+                    JOptionPane.showMessageDialog(Window.this, "Numbers are not prime integers!\n" +
+                                    "Try once again...",
+                            "Error!",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (!Algorithm.relativelyPrime(phi, eValue)) {
+                    JOptionPane.showMessageDialog(Window.this, "E is not relatively prime to φ!\n" +
+                                    "Try once again...",
+                            "Error!",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                JOptionPane.showMessageDialog(Window.this, "Your public key is {" + eValue + ", " + n + "}\n" +
+                                "Your private key is {" + d + ", " + n + "}. Don't forget it!",
+                        "For your information",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
-            while (!Algorithm.isPrime(new BigInteger(Long.toString(q))) || q < 1000) {
-                q = rand.nextInt();
-            }
-            key[0] = new BigInteger(Long.toString(p));
-            key[1] = new BigInteger(Long.toString(q));
+            outputText.setText(Algorithm.RSAAlgorithm(sourceText.getText(), new BigInteger[]{eValue, n}));
         } else {
             key[0] = new BigInteger(p.getValue().toString());
             key[1] = new BigInteger(q.getValue().toString());
-            if (!Algorithm.isPrime(key[0]) || !Algorithm.isPrime(key[1])) {
-                JOptionPane.showMessageDialog(Window.this, "Numbers are not prime integers!\n" +
-                                "Try once again...",
-                        "Error!",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            BigInteger eValue = new BigInteger(e.getValue().toString());
-            if (!Algorithm.relativelyPrime(key[0].subtract(BigInteger.ONE).multiply(key[1].subtract(BigInteger.ONE)), eValue)) {
-                JOptionPane.showMessageDialog(Window.this, "E is not relatively prime to φ!\n" +
-                                "Try once again...",
-                        "Error!",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            outputText.setText(Algorithm.RSAAlgorithm(sourceText.getText(), key));
         }
-        outputText.setText(Algorithm.RSAAlgorithm(sourceText.getText(), key));
     }
 }

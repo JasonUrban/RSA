@@ -27,7 +27,7 @@ class Algorithm {
         return gcd(a, b).equals(BigInteger.ONE);
     }
 
-    private static BigInteger[] xgcd(BigInteger p, BigInteger q) {
+    static BigInteger[] xgcd(BigInteger p, BigInteger q) {
         if (q.equals(BigInteger.ZERO)) {
             return new BigInteger[]{new BigInteger(String.valueOf(1)), new BigInteger(String.valueOf(0))};
         }
@@ -35,15 +35,6 @@ class Algorithm {
         BigInteger a = vals[1];
         BigInteger b = vals[0].subtract((p.divide(q)).multiply(vals[1]));
         return new BigInteger[]{a, b};
-    }
-
-    static BigInteger getE(BigInteger p, BigInteger q) {
-        BigInteger phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
-        BigInteger e;
-        do {
-            e = new BigInteger(phi.bitLength(), new Random());
-        } while (e.compareTo(phi) >= 0 || !relativelyPrime(phi, e));
-        return e;
     }
 
     static String RSAAlgorithm(String sourceText, BigInteger[] key) {
