@@ -142,10 +142,12 @@ class Window extends JFrame {
             }
             pLabel.setVisible(!pLabel.isVisible());
             qLabel.setVisible(!qLabel.isVisible());
-            eLabel.setVisible(!eLabel.isVisible());
+            if(encrypt.isSelected()) {
+                eLabel.setVisible(!eLabel.isVisible());
+                e.setVisible(!e.isVisible());
+            }
             p.setVisible(!p.isVisible());
             q.setVisible(!q.isVisible());
-            e.setVisible(!e.isVisible());
         });
         encrypt.addActionListener(e1 -> {
             encryptButton.setVisible(true);
@@ -159,8 +161,10 @@ class Window extends JFrame {
             }
             pLabel.setText("Input prime number p:");
             qLabel.setText("Input prime number q:");
-            eLabel.setVisible(true);
-            e.setVisible(true);
+            if (!keyByDefault.isSelected()) {
+                eLabel.setVisible(true);
+                e.setVisible(true);
+            }
         });
         decrypt.addActionListener(e1 -> {
             encryptButton.setVisible(false);

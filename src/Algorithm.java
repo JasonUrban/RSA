@@ -1,5 +1,4 @@
 import java.math.BigInteger;
-import java.util.Random;
 
 class Algorithm {
     private static BigInteger gcd(BigInteger a, BigInteger b) {
