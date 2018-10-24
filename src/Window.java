@@ -138,6 +138,7 @@ class Window extends JFrame {
                 q.setValue(1009);
                 e.setValue(0);
             }
+            image.setVisible(!image.isVisible());
             pLabel.setVisible(!pLabel.isVisible());
             qLabel.setVisible(!qLabel.isVisible());
             if(encrypt.isSelected()) {
