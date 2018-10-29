@@ -1,4 +1,3 @@
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -14,19 +13,19 @@ class Algorithm {
         return a;
     }
 
-    static boolean isPrime(BigInteger n) {
+    static boolean isNotPrime(BigInteger n) {
         if (n.mod(BigInteger.TWO).equals(BigInteger.ZERO)) {
-            return false;
+            return true;
         }
         for (BigInteger i = new BigInteger("3"); i.multiply(i).compareTo(n) <= 0; i = i.add(BigInteger.TWO)) {
             if (n.mod(i).equals(BigInteger.ZERO))
-                return false;
+                return true;
         }
-        return true;
+        return false;
     }
 
-    static boolean relativelyPrime(BigInteger a, BigInteger b) {
-        return gcd(a, b).equals(BigInteger.ONE);
+    static boolean notRelativelyPrime(BigInteger a, BigInteger b) {
+        return !gcd(a, b).equals(BigInteger.ONE);
     }
 
     static BigInteger[] xgcd(BigInteger p, BigInteger q) {
@@ -44,8 +43,7 @@ class Algorithm {
         if (!isDecrypt) {
             for (int i = 0; i < sourceText.length(); i++) {
                 char item = sourceText.charAt(i);
-                long code = item;
-                String num = String.valueOf(code);
+                String num = String.valueOf((long) item);
                 BigInteger digit = new BigInteger(num);
                 BigInteger res = digit.modPow(key[0], key[1]);
                 long codeRes = res.longValue();

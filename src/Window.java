@@ -284,10 +284,10 @@ class Window extends JFrame {
             if (keyByDefault.isSelected()) {
                 long p = 0, q = 0;
                 Random rand = new Random();
-                while (!Algorithm.isPrime(new BigInteger(Long.toString(p))) || p < 1000) {
+                while (Algorithm.isNotPrime(new BigInteger(Long.toString(p))) || p < 1000) {
                     p = rand.nextInt();
                 }
-                while (!Algorithm.isPrime(new BigInteger(Long.toString(q))) || q < 1000) {
+                while (Algorithm.isNotPrime(new BigInteger(Long.toString(q))) || q < 1000) {
                     q = rand.nextInt();
                 }
                 key[0] = new BigInteger(Long.toString(p));
@@ -298,7 +298,7 @@ class Window extends JFrame {
                     eValue = new BigInteger(phi.bitLength(), rand);
                     d = Algorithm.xgcd(phi, eValue)[1];
                 }
-                while (eValue.compareTo(phi) >= 0 || !Algorithm.relativelyPrime(phi, eValue) || d.compareTo(BigInteger.ZERO) < 0);
+                while (eValue.compareTo(phi) >= 0 || Algorithm.notRelativelyPrime(phi, eValue) || d.compareTo(BigInteger.ZERO) < 0);
             } else {
                 key[0] = new BigInteger(p.getValue().toString());
                 key[1] = new BigInteger(q.getValue().toString());
@@ -313,14 +313,14 @@ class Window extends JFrame {
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                if (!Algorithm.isPrime(key[0]) || !Algorithm.isPrime(key[1])) {
+                if (Algorithm.isNotPrime(key[0]) || Algorithm.isNotPrime(key[1])) {
                     JOptionPane.showMessageDialog(Window.this, "Numbers are not prime integers!\n" +
                                     "Try once again...",
                             "Error!",
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                if (!Algorithm.relativelyPrime(phi, eValue)) {
+                if (Algorithm.notRelativelyPrime(phi, eValue)) {
                     JOptionPane.showMessageDialog(Window.this, "E is not relatively prime to φ!\n" +
                                     "Try once again...",
                             "Error!",
