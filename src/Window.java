@@ -7,6 +7,7 @@ class Window extends JFrame {
     private JTextArea sourceText;
     private JTextArea outputText;
     private JCheckBox keyByDefault;
+    private JCheckBox isHex;
     private JSpinner p;
     private JSpinner q;
     private JSpinner e;
@@ -37,6 +38,7 @@ class Window extends JFrame {
         JRadioButton encrypt = new JRadioButton("Encrypt");
         JRadioButton decrypt = new JRadioButton("Decrypt");
         keyByDefault = new JCheckBox("Key by default");
+        isHex = new JCheckBox("Hex");
         ButtonGroup group = new ButtonGroup();
         JScrollPane sourceTextScrollPane = new JScrollPane(sourceText);
         JScrollPane outputTextScrollPane = new JScrollPane(outputText);
@@ -49,6 +51,8 @@ class Window extends JFrame {
         decrypt.setLocation(150, 100);
         keyByDefault.setSize(150, 50);
         keyByDefault.setLocation(50, 75);
+        isHex.setSize(150, 50);
+        isHex.setLocation(50, 25);
         encryptButton.setSize(150, 50);
         encryptButton.setLocation(110, 390);
         encryptButton.setBackground(new Color(100, 200, 225));
@@ -87,9 +91,11 @@ class Window extends JFrame {
         encrypt.setOpaque(false);
         decrypt.setOpaque(false);
         keyByDefault.setOpaque(false);
+        isHex.setOpaque(false);
         outputText.setLineWrap(true);
         sourceText.setLineWrap(true);
         keyByDefault.setSelected(true);
+        isHex.setSelected(false);
         encryptButton.setVisible(true);
         decryptButton.setVisible(false);
         encrypt.setSelected(true);
@@ -119,6 +125,7 @@ class Window extends JFrame {
         panel.add(encrypt);
         panel.add(decrypt);
         panel.add(keyByDefault);
+        panel.add(isHex);
         panel.add(encryptButton);
         panel.add(decryptButton);
         outputText.setWrapStyleWord(true);
@@ -141,12 +148,51 @@ class Window extends JFrame {
             image.setVisible(!image.isVisible());
             pLabel.setVisible(!pLabel.isVisible());
             qLabel.setVisible(!qLabel.isVisible());
-            if(encrypt.isSelected()) {
+            if (encrypt.isSelected()) {
                 eLabel.setVisible(!eLabel.isVisible());
                 e.setVisible(!e.isVisible());
             }
             p.setVisible(!p.isVisible());
             q.setVisible(!q.isVisible());
+        });
+        isHex.addActionListener(e -> {
+            if (isHex.isSelected()) {
+                String source = sourceText.getText();
+                StringBuilder sourceOut = new StringBuilder();
+                for (int i = 0; i < source.length(); i++) {
+                    sourceOut.append(String.format("%04x", (int) source.charAt(i)).toUpperCase());
+                }
+                sourceText.setText(sourceOut.toString());
+                String output = outputText.getText();
+                StringBuilder outputOut = new StringBuilder();
+                for (int i = 0; i < output.length(); i++) {
+                    outputOut.append(String.format("%04x", (int) output.charAt(i)));
+                }
+                outputText.setText(outputOut.toString());
+            } else {
+                String source = sourceText.getText();
+                String output = outputText.getText();
+                StringBuilder sourceOut = new StringBuilder();
+                if (source.length() % 4 != 0 || output.length() % 4 != 0) {
+                    JOptionPane.showMessageDialog(Window.this, "Length not multiple by 4!\n" +
+                                    "Try once again...",
+                            "Error!",
+                            JOptionPane.ERROR_MESSAGE);
+                    isHex.setSelected(true);
+                    return;
+                }
+                for (int i = 0; i < source.length(); i += 4) {
+                    int item = Integer.parseInt(source.substring(i, i + 4), 16);
+                    sourceOut.append((char) item);
+                }
+                sourceText.setText(sourceOut.toString());
+                StringBuilder outputOut = new StringBuilder();
+                for (int i = 0; i < output.length(); i += 4) {
+                    int item = Integer.parseInt(output.substring(i, i + 4), 16);
+                    outputOut.append((char) item);
+                }
+                outputText.setText(outputOut.toString());
+            }
         });
         encrypt.addActionListener(e1 -> {
             encryptButton.setVisible(true);
