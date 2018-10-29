@@ -230,6 +230,8 @@ class Window extends JFrame {
                 eLabel.setVisible(true);
                 e.setVisible(true);
             }
+            p.setModel(new SpinnerNumberModel(1009, 1000, 1000000000, 1));
+            q.setModel(new SpinnerNumberModel(1009, 1000, 1000000000, 1));
         });
         decrypt.addActionListener(e1 -> {
             encryptButton.setVisible(false);
@@ -330,11 +332,11 @@ class Window extends JFrame {
                             "Your private key is {" + d + ", " + n + "}.\nDon't forget it!",
                     "For your information",
                     JOptionPane.INFORMATION_MESSAGE);
-            outputText.setText(Algorithm.RSAAlgorithm(sourceText.getText(), new BigInteger[]{eValue, n}));
+            outputText.setText(Algorithm.RSAAlgorithm(sourceText.getText(), new BigInteger[]{eValue, n}, false));
         } else {
             key[0] = new BigInteger(p.getValue().toString());
             key[1] = new BigInteger(q.getValue().toString());
-            outputText.setText(Algorithm.RSAAlgorithm(sourceText.getText(), key));
+            outputText.setText(Algorithm.RSAAlgorithm(sourceText.getText(), key, true));
         }
     }
 }

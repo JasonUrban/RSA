@@ -1,4 +1,7 @@
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 class Algorithm {
     private static BigInteger gcd(BigInteger a, BigInteger b) {
@@ -36,10 +39,37 @@ class Algorithm {
         return new BigInteger[]{a, b};
     }
 
-    static String RSAAlgorithm(String sourceText, BigInteger[] key) {
+    static String RSAAlgorithm(String sourceText, BigInteger[] key, boolean isDecrypt) {
         StringBuilder output = new StringBuilder();
-        for (int i = 0; i < sourceText.length(); i++) {
-            output.append((char) new BigInteger(String.valueOf((long) sourceText.charAt(i))).modPow(key[0], key[1]).longValue());
+        if (!isDecrypt) {
+            for (int i = 0; i < sourceText.length(); i++) {
+                char item = sourceText.charAt(i);
+                long code = item;
+                String num = String.valueOf(code);
+                BigInteger digit = new BigInteger(num);
+                BigInteger res = digit.modPow(key[0], key[1]);
+                long codeRes = res.longValue();
+                ByteBuffer buffer = ByteBuffer.allocate(Long.SIZE / Byte.SIZE);
+                buffer.putLong(0, codeRes);
+                byte[] arr = buffer.array();
+                String resStr = new String(arr);
+                output.append(resStr);
+            }
+        } else {
+            for (int i = 0; i < sourceText.length(); i += 8) {
+                String resStr = sourceText.substring(i, i + 8);
+                byte[] arr = resStr.getBytes(StandardCharsets.UTF_8);
+                ByteBuffer buffer = ByteBuffer.allocate(12);
+                buffer.put(arr, 0, arr.length);
+                buffer.flip();
+                long codeRes = buffer.getLong();
+                String num = String.valueOf(codeRes);
+                BigInteger digit = new BigInteger(num);
+                BigInteger res = digit.modPow(key[0], key[1]);
+                long code = res.longValue();
+                char item = (char) code;
+                output.append(item);
+            }
         }
         return output.toString();
     }
