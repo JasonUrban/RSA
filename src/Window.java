@@ -166,7 +166,7 @@ class Window extends JFrame {
                 String output = outputText.getText();
                 StringBuilder outputOut = new StringBuilder();
                 for (int i = 0; i < output.length(); i++) {
-                    outputOut.append(String.format("%04x", (int) output.charAt(i)));
+                    outputOut.append(String.format("%04x", (int) output.charAt(i)).toUpperCase());
                 }
                 outputText.setText(outputOut.toString());
             } else {
@@ -305,11 +305,11 @@ class Window extends JFrame {
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                JOptionPane.showMessageDialog(Window.this, "Your public key is {" + eValue + ", " + n + "}\n" +
-                                "Your private key is {" + d + ", " + n + "}. Don't forget it!",
-                        "For your information",
-                        JOptionPane.INFORMATION_MESSAGE);
             }
+            JOptionPane.showMessageDialog(Window.this, "Your public key is {" + eValue + ", " + n + "}\n" +
+                            "Your private key is {" + d + ", " + n + "}.\nDon't forget it!",
+                    "For your information",
+                    JOptionPane.INFORMATION_MESSAGE);
             outputText.setText(Algorithm.RSAAlgorithm(sourceText.getText(), new BigInteger[]{eValue, n}));
         } else {
             key[0] = new BigInteger(p.getValue().toString());
