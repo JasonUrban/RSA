@@ -182,13 +182,33 @@ class Window extends JFrame {
                     return;
                 }
                 for (int i = 0; i < source.length(); i += 4) {
-                    int item = Integer.parseInt(source.substring(i, i + 4), 16);
+                    int item;
+                    try {
+                        item = Integer.parseInt(source.substring(i, i + 4), 16);
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(Window.this, "Incorrect data was input!\n" +
+                                        "Try once again...",
+                                "Error!",
+                                JOptionPane.ERROR_MESSAGE);
+                        isHex.setSelected(true);
+                        return;
+                    }
                     sourceOut.append((char) item);
                 }
                 sourceText.setText(sourceOut.toString());
                 StringBuilder outputOut = new StringBuilder();
                 for (int i = 0; i < output.length(); i += 4) {
-                    int item = Integer.parseInt(output.substring(i, i + 4), 16);
+                    int item;
+                    try {
+                        item = Integer.parseInt(output.substring(i, i + 4), 16);
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(Window.this, "Incorrect data was input!\n" +
+                                        "Try once again...",
+                                "Error!",
+                                JOptionPane.ERROR_MESSAGE);
+                        isHex.setSelected(true);
+                        return;
+                    }
                     outputOut.append((char) item);
                 }
                 outputText.setText(outputOut.toString());
