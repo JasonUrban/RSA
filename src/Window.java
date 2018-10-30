@@ -371,7 +371,7 @@ class Window extends JFrame {
                     return;
                 }
             }
-            JTextArea ta = new JTextArea(3, 40);
+            JTextArea ta = new JTextArea(3, 45);
             ta.setText("Your public key is {" + eValue + ", " + n + "}.\n" +
                     "Your private key is {" + d + ", " + n + "}.\n" +
                     "Don't forget it!");
