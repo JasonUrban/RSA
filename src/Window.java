@@ -280,7 +280,7 @@ class Window extends JFrame {
     private void translate(boolean isDecrypt) {
         BigInteger[] key = new BigInteger[2];
         String source = sourceText.getText(), output;
-        if(isHex.isSelected()) {
+        if (isHex.isSelected()) {
             StringBuilder sourceOut = new StringBuilder();
             if (source.length() % 4 != 0) {
                 JOptionPane.showMessageDialog(Window.this, "Length not multiple by 4!\n" +
@@ -372,7 +372,7 @@ class Window extends JFrame {
             key[1] = new BigInteger(q.getValue().toString());
             output = Algorithm.RSAAlgorithm(source, key, true);
         }
-        if(isHex.isSelected()) {
+        if (isHex.isSelected()) {
             StringBuilder outputOut = new StringBuilder();
             for (int i = 0; i < output.length(); i++) {
                 outputOut.append(String.format("%04x", (int) output.charAt(i)).toUpperCase());

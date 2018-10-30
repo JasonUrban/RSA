@@ -47,7 +47,7 @@ class Algorithm {
                 long codeRes = res.longValue();
                 String hex = Long.toHexString(codeRes).toUpperCase();
                 StringBuilder hexRes = new StringBuilder();
-                for(int j = 0; j < 16 - hex.length(); j++) {
+                for (int j = 0; j < 16 - hex.length(); j++) {
                     hexRes.append("0");
                 }
                 hexRes.append(hex);
@@ -55,7 +55,7 @@ class Algorithm {
                 StringBuilder resStr = new StringBuilder();
                 for (int j = 0; j < hex.length(); j += 2) {
                     String subStr = hex.substring(j, j + 2);
-                    resStr.append((char)Integer.parseInt(subStr, 16));
+                    resStr.append((char) Integer.parseInt(subStr, 16));
                 }
                 output.append(resStr);
             }
@@ -63,7 +63,7 @@ class Algorithm {
             for (int i = 0; i < sourceText.length(); i += 8) {
                 String resStr = sourceText.substring(i, i + 8);
                 long codeRes = 0x0, multiplier = 0x100000000000000L;
-                for(int j = 0; j < resStr.length(); j++) {
+                for (int j = 0; j < resStr.length(); j++) {
                     char item = resStr.charAt(j);
                     codeRes += (int) item * multiplier;
                     multiplier /= 0x100;
