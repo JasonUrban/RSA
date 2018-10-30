@@ -99,11 +99,11 @@ class Window extends JFrame {
         encryptButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         decryptButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         clearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        sourceText.setFont(new Font("System Regular", Font.PLAIN, 16));
-        outputText.setFont(new Font("System Regular", Font.PLAIN, 16));
-        p.setFont(new Font("System Regular", Font.PLAIN, 16));
-        q.setFont(new Font("System Regular", Font.PLAIN, 16));
-        e.setFont(new Font("System Regular", Font.PLAIN, 16));
+        sourceText.setFont(new Font("Consolas", Font.PLAIN, 16));
+        outputText.setFont(new Font("Consolas", Font.PLAIN, 16));
+        p.setFont(new Font("Consolas", Font.PLAIN, 16));
+        q.setFont(new Font("Consolas", Font.PLAIN, 16));
+        e.setFont(new Font("Consolas", Font.PLAIN, 16));
         panel.add(sourceLabel);
         panel.add(outLabel);
         panel.add(pLabel);
@@ -288,6 +288,13 @@ class Window extends JFrame {
     }
 
     private void translate(boolean isDecrypt) {
+        if(sourceText.getText().equals("")) {
+            JOptionPane.showMessageDialog(Window.this, "Input text area is empty!\n" +
+                            "Input some data...",
+                    "Error!",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         BigInteger[] key = new BigInteger[2];
         String source = sourceText.getText(), output;
         if (isHex.isSelected()) {
@@ -368,7 +375,7 @@ class Window extends JFrame {
             ta.setText("Your public key is {" + eValue + ", " + n + "}.\n" +
                     "Your private key is {" + d + ", " + n + "}.\n" +
                     "Don't forget it!");
-            ta.setFont(new Font("System Regular", Font.PLAIN, 14));
+            ta.setFont(new Font("Consolas", Font.PLAIN, 14));
             ta.setWrapStyleWord(true);
             ta.setLineWrap(true);
             ta.setCaretPosition(0);
