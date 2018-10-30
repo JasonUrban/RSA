@@ -29,12 +29,9 @@ class Window extends JFrame {
         JLabel eLabel = new JLabel("Input e parameter:");
         sourceText = new JTextArea();
         outputText = new JTextArea();
-        SpinnerModel model = new SpinnerNumberModel((Long) 1009L, (Long) 1009L, (Long) 9973L, (Long) 1L);
-        p = new JSpinner(model);
-        model = new SpinnerNumberModel((Long) 1009L, (Long) 1009L, (Long) 9973L, (Long) 1L);
-        q = new JSpinner(model);
-        model = new SpinnerNumberModel((Long) 1009L, (Long) 1000L, (Long) Long.MAX_VALUE, (Long) 1L);
-        e = new JSpinner(model);
+        p = new JSpinner(new SpinnerNumberModel((Long) 1009L, (Long) 1009L, (Long) 9973L, (Long) 1L));
+        q = new JSpinner(new SpinnerNumberModel((Long) 1009L, (Long) 1009L, (Long) 9973L, (Long) 1L));
+        e = new JSpinner(new SpinnerNumberModel((Long) 1009L, (Long) 1000L, (Long) Long.MAX_VALUE, (Long) 1L));
         JRadioButton encrypt = new JRadioButton("Encrypt");
         JRadioButton decrypt = new JRadioButton("Decrypt");
         keyByDefault = new JCheckBox("Key by default");
@@ -141,16 +138,16 @@ class Window extends JFrame {
         setSize(1150, 500);
         keyByDefault.addActionListener(e1 -> {
             if (p.isVisible()) {
-                p.setValue(1009);
-                q.setValue(1009);
-                e.setValue(0);
+                p.setValue(1009L);
+                q.setValue(1009L);
+                e.setValue(1009L);
             }
             image.setVisible(!image.isVisible());
             pLabel.setVisible(!pLabel.isVisible());
             qLabel.setVisible(!qLabel.isVisible());
             if (encrypt.isSelected()) {
-                eLabel.setVisible(!eLabel.isVisible());
-                e.setVisible(!e.isVisible());
+                eLabel.setVisible(!keyByDefault.isSelected());
+                e.setVisible(!keyByDefault.isSelected());
             }
             p.setVisible(!p.isVisible());
             q.setVisible(!q.isVisible());
@@ -224,14 +221,20 @@ class Window extends JFrame {
                 sourceText.setText(outputText.getText());
                 outputText.setText(temp);
             }
+            image.setVisible(true);
+            keyByDefault.setVisible(true);
+            pLabel.setVisible(false);
+            qLabel.setVisible(false);
+            p.setVisible(false);
+            q.setVisible(false);
+            isHex.setLocation(50, 25);
+            keyByDefault.setSelected(true);
             pLabel.setText("Input prime number p:");
             qLabel.setText("Input prime number q:");
-            if (!keyByDefault.isSelected()) {
-                eLabel.setVisible(true);
-                e.setVisible(true);
-            }
-            p.setModel(new SpinnerNumberModel((Long) 1009L, (Long) 1000L, (Long) Long.MAX_VALUE, (Long) 1L));
-            q.setModel(new SpinnerNumberModel((Long) 1009L, (Long) 1000L, (Long) Long.MAX_VALUE, (Long) 1L));
+            eLabel.setVisible(false);
+            e.setVisible(false);
+            p.setModel(new SpinnerNumberModel((Long) 1009L, (Long) 1000L, (Long) 9973L, (Long) 1L));
+            q.setModel(new SpinnerNumberModel((Long) 1009L, (Long) 1000L, (Long) 9973L, (Long) 1L));
         });
         decrypt.addActionListener(e1 -> {
             encryptButton.setVisible(false);
@@ -243,6 +246,13 @@ class Window extends JFrame {
                 sourceText.setText(outputText.getText());
                 outputText.setText(temp);
             }
+            image.setVisible(false);
+            keyByDefault.setVisible(false);
+            pLabel.setVisible(true);
+            qLabel.setVisible(true);
+            p.setVisible(true);
+            q.setVisible(true);
+            isHex.setLocation(50, 75);
             pLabel.setText("Input d parameter:");
             qLabel.setText("Input n parameter:");
             eLabel.setVisible(false);
@@ -253,9 +263,9 @@ class Window extends JFrame {
         clearButton.addActionListener(e1 -> {
             sourceText.setText("");
             outputText.setText("");
-            p.setValue(1009);
-            q.setValue(1009);
-            e.setValue(0);
+            p.setValue(1009L);
+            q.setValue(1009L);
+            e.setValue(1009L);
         });
         encryptButton.addActionListener(e -> translate(decrypt.isSelected()));
         decryptButton.addActionListener(e -> translate(decrypt.isSelected()));
@@ -310,11 +320,11 @@ class Window extends JFrame {
             if (keyByDefault.isSelected()) {
                 long p = 0, q = 0;
                 Random rand = new Random();
-                while (Algorithm.isNotPrime(new BigInteger(Long.toString(p))) || p < 1000) {
-                    p = rand.nextInt();
+                while (Algorithm.isNotPrime(new BigInteger(Long.toString(p))) || p < 1000 || p > 9973) {
+                    p = rand.nextInt(9973);
                 }
-                while (Algorithm.isNotPrime(new BigInteger(Long.toString(q))) || q < 1000) {
-                    q = rand.nextInt();
+                while (Algorithm.isNotPrime(new BigInteger(Long.toString(q))) || q < 1000 || q > 9973) {
+                    q = rand.nextInt(9973);
                 }
                 key[0] = new BigInteger(Long.toString(p));
                 key[1] = new BigInteger(Long.toString(q));
