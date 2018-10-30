@@ -288,7 +288,7 @@ class Window extends JFrame {
     }
 
     private void translate(boolean isDecrypt) {
-        if(sourceText.getText().equals("")) {
+        if (sourceText.getText().equals("")) {
             JOptionPane.showMessageDialog(Window.this, "Input text area is empty!\n" +
                             "Input some data...",
                     "Error!",
