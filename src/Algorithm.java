@@ -1,6 +1,4 @@
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 
 class Algorithm {
     private static BigInteger gcd(BigInteger a, BigInteger b) {
@@ -47,20 +45,29 @@ class Algorithm {
                 BigInteger digit = new BigInteger(num);
                 BigInteger res = digit.modPow(key[0], key[1]);
                 long codeRes = res.longValue();
-                ByteBuffer buffer = ByteBuffer.allocate(Long.SIZE / Byte.SIZE);
-                buffer.putLong(0, codeRes);
-                byte[] arr = buffer.array();
-                String resStr = new String(arr);
+                String hex = Long.toHexString(codeRes).toUpperCase();
+                StringBuilder hexRes = new StringBuilder();
+                for(int j = 0; j < 16 - hex.length(); j++) {
+                    hexRes.append("0");
+                }
+                hexRes.append(hex);
+                hex = hexRes.toString();
+                StringBuilder resStr = new StringBuilder();
+                for (int j = 0; j < hex.length(); j += 2) {
+                    String subStr = hex.substring(j, j + 2);
+                    resStr.append((char)Integer.parseInt(subStr, 16));
+                }
                 output.append(resStr);
             }
         } else {
             for (int i = 0; i < sourceText.length(); i += 8) {
                 String resStr = sourceText.substring(i, i + 8);
-                byte[] arr = resStr.getBytes(StandardCharsets.UTF_8);
-                ByteBuffer buffer = ByteBuffer.allocate(12);
-                buffer.put(arr, 0, arr.length);
-                buffer.flip();
-                long codeRes = buffer.getLong();
+                long codeRes = 0x0, multiplier = 0x100000000000000L;
+                for(int j = 0; j < resStr.length(); j++) {
+                    char item = resStr.charAt(j);
+                    codeRes += (int) item * multiplier;
+                    multiplier /= 0x100;
+                }
                 String num = String.valueOf(codeRes);
                 BigInteger digit = new BigInteger(num);
                 BigInteger res = digit.modPow(key[0], key[1]);

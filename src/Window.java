@@ -29,11 +29,11 @@ class Window extends JFrame {
         JLabel eLabel = new JLabel("Input e parameter:");
         sourceText = new JTextArea();
         outputText = new JTextArea();
-        SpinnerModel model = new SpinnerNumberModel(1009, 1009, 9973, 1);
+        SpinnerModel model = new SpinnerNumberModel((Long) 1009L, (Long) 1009L, (Long) 9973L, (Long) 1L);
         p = new JSpinner(model);
-        model = new SpinnerNumberModel(1009, 1009, 9973, 1);
+        model = new SpinnerNumberModel((Long) 1009L, (Long) 1009L, (Long) 9973L, (Long) 1L);
         q = new JSpinner(model);
-        model = new SpinnerNumberModel(1009, 1000, 1000000000, 1);
+        model = new SpinnerNumberModel((Long) 1009L, (Long) 1000L, (Long) Long.MAX_VALUE, (Long) 1L);
         e = new JSpinner(model);
         JRadioButton encrypt = new JRadioButton("Encrypt");
         JRadioButton decrypt = new JRadioButton("Decrypt");
@@ -230,8 +230,8 @@ class Window extends JFrame {
                 eLabel.setVisible(true);
                 e.setVisible(true);
             }
-            p.setModel(new SpinnerNumberModel(1009, 1000, 1000000000, 1));
-            q.setModel(new SpinnerNumberModel(1009, 1000, 1000000000, 1));
+            p.setModel(new SpinnerNumberModel((Long) 1009L, (Long) 1000L, (Long) Long.MAX_VALUE, (Long) 1L));
+            q.setModel(new SpinnerNumberModel((Long) 1009L, (Long) 1000L, (Long) Long.MAX_VALUE, (Long) 1L));
         });
         decrypt.addActionListener(e1 -> {
             encryptButton.setVisible(false);
@@ -247,8 +247,8 @@ class Window extends JFrame {
             qLabel.setText("Input n parameter:");
             eLabel.setVisible(false);
             e.setVisible(false);
-            p.setModel(new SpinnerNumberModel(1009, 1000, 1000000000, 1));
-            q.setModel(new SpinnerNumberModel(1009, 1000, 1000000000, 1));
+            p.setModel(new SpinnerNumberModel((Long) 1009L, (Long) 1000L, (Long) Long.MAX_VALUE, (Long) 1L));
+            q.setModel(new SpinnerNumberModel((Long) 1009L, (Long) 1000L, (Long) Long.MAX_VALUE, (Long) 1L));
         });
         clearButton.addActionListener(e1 -> {
             sourceText.setText("");
@@ -279,6 +279,32 @@ class Window extends JFrame {
 
     private void translate(boolean isDecrypt) {
         BigInteger[] key = new BigInteger[2];
+        String source = sourceText.getText(), output;
+        if(isHex.isSelected()) {
+            StringBuilder sourceOut = new StringBuilder();
+            if (source.length() % 4 != 0) {
+                JOptionPane.showMessageDialog(Window.this, "Length not multiple by 4!\n" +
+                                "Try once again...",
+                        "Error!",
+                        JOptionPane.ERROR_MESSAGE);
+                isHex.setSelected(true);
+                return;
+            }
+            for (int i = 0; i < source.length(); i += 4) {
+                int item;
+                try {
+                    item = Integer.parseInt(source.substring(i, i + 4), 16);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(Window.this, "Incorrect data was input!\n" +
+                                    "Try once again...",
+                            "Error!",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                sourceOut.append((char) item);
+            }
+            source = sourceOut.toString();
+        }
         if (!isDecrypt) {
             BigInteger eValue, phi, n, d;
             if (keyByDefault.isSelected()) {
@@ -328,15 +354,32 @@ class Window extends JFrame {
                     return;
                 }
             }
-            JOptionPane.showMessageDialog(Window.this, "Your public key is {" + eValue + ", " + n + "}\n" +
-                            "Your private key is {" + d + ", " + n + "}.\nDon't forget it!",
+            JTextArea ta = new JTextArea(3, 40);
+            ta.setText("Your public key is {" + eValue + ", " + n + "}.\n" +
+                    "Your private key is {" + d + ", " + n + "}.\n" +
+                    "Don't forget it!");
+            ta.setFont(new Font("System Regular", Font.PLAIN, 14));
+            ta.setWrapStyleWord(true);
+            ta.setLineWrap(true);
+            ta.setCaretPosition(0);
+            ta.setEditable(false);
+            JOptionPane.showMessageDialog(Window.this, new JScrollPane(ta),
                     "For your information",
                     JOptionPane.INFORMATION_MESSAGE);
-            outputText.setText(Algorithm.RSAAlgorithm(sourceText.getText(), new BigInteger[]{eValue, n}, false));
+            output = Algorithm.RSAAlgorithm(source, new BigInteger[]{eValue, n}, false);
         } else {
             key[0] = new BigInteger(p.getValue().toString());
             key[1] = new BigInteger(q.getValue().toString());
-            outputText.setText(Algorithm.RSAAlgorithm(sourceText.getText(), key, true));
+            output = Algorithm.RSAAlgorithm(source, key, true);
+        }
+        if(isHex.isSelected()) {
+            StringBuilder outputOut = new StringBuilder();
+            for (int i = 0; i < output.length(); i++) {
+                outputOut.append(String.format("%04x", (int) output.charAt(i)).toUpperCase());
+            }
+            outputText.setText(outputOut.toString());
+        } else {
+            outputText.setText(output);
         }
     }
 }
