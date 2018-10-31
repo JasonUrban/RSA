@@ -53,20 +53,20 @@ class Algorithm {
                 hexRes.append(hex);
                 hex = hexRes.toString();
                 StringBuilder resStr = new StringBuilder();
-                for (int j = 0; j < hex.length(); j += 2) {
-                    String subStr = hex.substring(j, j + 2);
+                for (int j = 0; j < hex.length(); j += 4) {
+                    String subStr = hex.substring(j, j + 4);
                     resStr.append((char) Integer.parseInt(subStr, 16));
                 }
                 output.append(resStr);
             }
         } else {
-            for (int i = 0; i < sourceText.length(); i += 8) {
-                String resStr = sourceText.substring(i, i + 8);
-                long codeRes = 0x0, multiplier = 0x100000000000000L;
+            for (int i = 0; i < sourceText.length(); i += 4) {
+                String resStr = sourceText.substring(i, i + 4);
+                long codeRes = 0x0, multiplier = 0x1000000000000L;
                 for (int j = 0; j < resStr.length(); j++) {
                     char item = resStr.charAt(j);
                     codeRes += (int) item * multiplier;
-                    multiplier /= 0x100;
+                    multiplier /= 0x10000;
                 }
                 String num = String.valueOf(codeRes);
                 BigInteger digit = new BigInteger(num);
